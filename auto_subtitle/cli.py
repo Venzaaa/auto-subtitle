@@ -54,9 +54,9 @@ def main():
         # Posisi Tengah Layar (Alignment=10)
         # Shadow Dikurangin dari 7 jadi 3
         style = (
-            "Fontname=Montserrat Black,Fontsize=25,"
+            "Fontname=Montserrat Black,Fontsize=20,"
             "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-            "Outline=3,Shadow=3,BorderStyle=1,Alignment=10,MarginV=10"
+            "Outline=3,Shadow=1,BorderStyle=1,Alignment=10,MarginV=10"
         )
 
         print(f"Adding subtitles to {filename(path)}...")
