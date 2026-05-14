@@ -27,10 +27,22 @@ def main():
     model = whisper.load_model(model_name)
     audios = get_audio(args.pop("video"))
     
-    # AKTIFKAN word_timestamps=True agar muncul satu persatu
+    def transcribe_with_word_fix(audio_path):
+        # Fix untuk error 'Unsupported language: auto' saat word_timestamps=True
+        current_args = args.copy()
+        if current_args.get("language") == "auto":
+            audio = whisper.load_audio(audio_path)
+            audio = whisper.pad_or_trim(audio)
+            mel = whisper.log_mel_spectrogram(audio).to(model.device)
+            _, probs = model.detect_language(mel)
+            current_args["language"] = max(probs, key=probs.get)
+            print(f"Detected language for word-level: {current_args['language']}")
+
+        return model.transcribe(audio_path, word_timestamps=True, **current_args)
+
     subtitles = get_subtitles(
         audios, output_srt or srt_only, output_dir, 
-        lambda audio_path: model.transcribe(audio_path, word_timestamps=True, **args)
+        transcribe_with_word_fix
     )
 
     if srt_only: return
@@ -38,9 +50,6 @@ def main():
     for path, srt_path in subtitles.items():
         out_path = os.path.join(output_dir, f"{filename(path)}.mp4")
         
-        # STYLE: Montserrat-Black, Stroke (Outline) Tebal, Shadow Jarak 7
-        # PrimaryColour &H00FFFFFF (Putih), Outline &H00000000 (Hitam)
-        # Alignment 2 = Tengah Bawah
         style = (
             "Fontname=Montserrat Black,Fontsize=35,"
             "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
