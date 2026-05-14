@@ -49,26 +49,30 @@ def main():
     for path, srt_path in subtitles.items():
         out_path = os.path.join(output_dir, f"{filename(path)}.mp4")
         
-        # STYLE FINAL: Montserrat Black, No Shadow, Font 25, Tengah Layar
+        # --- FIX TOTAL: BorderStyle=3 (Pure Outline) ---
+        # Shadow=0 dan Outline=2 
+        # Alignment=10 (Tengah-tengah)
         style = (
             "Fontname=Montserrat Black,Fontsize=20,"
             "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-            "Outline=2,Shadow=0,BorderStyle=1,Alignment=10,MarginV=10"
+            "BackColour=&HFF000000,Outline=2,Shadow=0,BorderStyle=3,"
+            "Alignment=10,MarginV=10"
         )
 
         print(f"Adding subtitles to {filename(path)}...")
         
-        # Render High Quality (Anti-Burem)
         input_stream = ffmpeg.input(path)
         video = input_stream.video.filter('subtitles', srt_path, force_style=style)
         audio = input_stream.audio
 
+        # TETEP PAKE KUALITAS MENTOK KANAN (CRF 16)
         ffmpeg.output(
             video, audio, out_path,
             vcodec='libx264',
-            crf=17,
+            crf=16,
             preset='slow',
             pix_fmt='yuv420p',
+            tune='film',
             acodec='copy'
         ).run(quiet=True, overwrite_output=True)
 
