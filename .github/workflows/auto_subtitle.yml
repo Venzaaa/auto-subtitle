@@ -23,11 +23,19 @@ jobs:
         with:
           python-version: '3.10'
 
+      # --- BAGIAN CACHE MULAI DISINI ---
+      - name: Cache Python Packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install System & Register Font
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
-          # Register font Montserrat-Black.ttf yang ada di repo
           sudo mkdir -p /usr/local/share/fonts/custom
           sudo cp Montserrat-Black.ttf /usr/local/share/fonts/custom/
           sudo fc-cache -fv
@@ -35,6 +43,7 @@ jobs:
       - name: Install Python Libraries
         run: |
           python -m pip install --upgrade pip
+          # Kalau cache ada, proses ini bakal instan
           pip install ffmpeg-python openai-whisper
           pip install -e .
 
