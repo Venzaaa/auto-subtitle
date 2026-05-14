@@ -49,14 +49,14 @@ def main():
     for path, srt_path in subtitles.items():
         out_path = os.path.join(output_dir, f"{filename(path)}.mp4")
         
-        # --- FIX TOTAL: BorderStyle=3 (Pure Outline) ---
-        # Shadow=0 dan Outline=2 
-        # Alignment=10 (Tengah-tengah)
+        # STYLE: Pure Outline Sempurna (No Shadow, No Ghosting)
+        # Outline=2 (Ketebalan pas)
+        # Spacing=0 & Blur=0 (Kunci biar outline rata di semua sisi)
         style = (
             "Fontname=Montserrat Black,Fontsize=20,"
             "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-            "BackColour=&HFF000000,Outline=2,Shadow=0,BorderStyle=3,"
-            "Alignment=10,MarginV=10"
+            "Outline=3,Shadow=0,BorderStyle=1,"
+            "Alignment=10,MarginV=10,Spacing=0,Blur=0"
         )
 
         print(f"Adding subtitles to {filename(path)}...")
