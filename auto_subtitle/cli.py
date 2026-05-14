@@ -56,7 +56,7 @@ def main():
         style = (
             "Fontname=Montserrat Black,Fontsize=20,"
             "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-            "Outline=3,Shadow=0,BorderStyle=1,Alignment=10,MarginV=10"
+            "Outline=2,Shadow=0,BorderStyle=1,Alignment=10,MarginV=10"
         )
 
         print(f"Adding subtitles to {filename(path)}...")
