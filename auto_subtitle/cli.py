@@ -65,7 +65,15 @@ def main():
 
         ffmpeg.concat(
             video.filter('subtitles', srt_path, force_style=style), audio, v=1, a=1
-        ).output(out_path).run(quiet=True, overwrite_output=True)
+        ).output(
+            out_path, 
+            vcodec='libx264', 
+            crf=17,           # Kualitas paling deket sama asli
+            preset='veryslow', 
+            pix_fmt='yuv420p', 
+            acodec='copy'      
+        ).run(quiet=True, overwrite_output=True)
+
 
 def get_audio(paths):
     temp_dir = tempfile.gettempdir()
