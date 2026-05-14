@@ -9,11 +9,11 @@ from .utils import filename, str2bool, write_srt
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("video", nargs="+", type=str, help="paths to video files")
-    parser.add_argument("--model", default="small", help="Whisper model")
-    parser.add_argument("--output_dir", "-o", type=str, default=".", help="output dir")
-    parser.add_argument("--output_srt", type=str2bool, default=False, help="output srt")
-    parser.add_argument("--srt_only", type=str2bool, default=False, help="srt only")
-    parser.add_argument("--verbose", type=str2bool, default=False, help="verbose")
+    parser.add_argument("--model", default="small", help="Whisper model name")
+    parser.add_argument("--output_dir", "-o", type=str, default=".", help="output directory")
+    parser.add_argument("--output_srt", type=str2bool, default=False, help="output srt file")
+    parser.add_argument("--srt_only", type=str2bool, default=False, help="generate srt only")
+    parser.add_argument("--verbose", type=str2bool, default=False, help="verbose progress")
     parser.add_argument("--task", type=str, default="transcribe", choices=["transcribe", "translate"])
     parser.add_argument("--language", type=str, default="auto")
 
@@ -27,7 +27,7 @@ def main():
     model = whisper.load_model(model_name)
     audios = get_audio(args.pop("video"))
     
-    # Tambahkan word_timestamps=True untuk memunculkan teks satu persatu
+    # AKTIFKAN word_timestamps=True agar muncul satu persatu
     subtitles = get_subtitles(
         audios, output_srt or srt_only, output_dir, 
         lambda audio_path: model.transcribe(audio_path, word_timestamps=True, **args)
@@ -38,13 +38,13 @@ def main():
     for path, srt_path in subtitles.items():
         out_path = os.path.join(output_dir, f"{filename(path)}.mp4")
         
-        # STYLE MONTESSERAT BLACK + STROKE + SHADOW
-        # PrimaryColour: Putih (&H00FFFFFF), Outline: Hitam (&H00000000)
-        # Alignment: 2 (Center Bottom), Outline: 3 (Setara Stroke tebal)
+        # STYLE: Montserrat-Black, Stroke (Outline) Tebal, Shadow Jarak 7
+        # PrimaryColour &H00FFFFFF (Putih), Outline &H00000000 (Hitam)
+        # Alignment 2 = Tengah Bawah
         style = (
             "Fontname=Montserrat Black,Fontsize=35,"
             "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-            "Outline=3,BorderStyle=1,Shadow=7,Alignment=2,MarginV=25"
+            "Outline=3,Shadow=7,BorderStyle=1,Alignment=2,MarginV=30"
         )
 
         print(f"Adding subtitles to {filename(path)}...")
