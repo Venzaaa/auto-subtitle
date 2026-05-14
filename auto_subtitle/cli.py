@@ -49,11 +49,14 @@ def main():
 
     for path, srt_path in subtitles.items():
         out_path = os.path.join(output_dir, f"{filename(path)}.mp4")
-        
+
+        # Penyesuaian Style: Ukuran -10 (dari 35 jadi 25)
+        # Posisi Tengah Layar (Alignment=10)
+        # Shadow Dikurangin dari 7 jadi 3
         style = (
-            "Fontname=Montserrat Black,Fontsize=35,"
+            "Fontname=Montserrat Black,Fontsize=25,"
             "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-            "Outline=3,Shadow=7,BorderStyle=1,Alignment=2,MarginV=30"
+            "Outline=3,Shadow=3,BorderStyle=1,Alignment=10,MarginV=10"
         )
 
         print(f"Adding subtitles to {filename(path)}...")
