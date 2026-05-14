@@ -22,21 +22,22 @@ def format_timestamp(seconds: float, always_include_hours: bool = False):
     return f"{hours_marker}{minutes:02d}:{seconds:02d},{milliseconds:03d}"
 
 def write_srt(transcript: Iterator[dict], file: TextIO):
-    # Logika untuk menulis per kata (word-level)
     count = 1
     for segment in transcript:
+        # Mengambil data per kata jika tersedia
         if "words" in segment:
             for word in segment["words"]:
                 start = format_timestamp(word["start"], always_include_hours=True)
                 end = format_timestamp(word["end"], always_include_hours=True)
-                text = word["word"].strip().upper() # Pakai Upper biar lebih tegas
+                # Teks dibikin Uppercase biar gaya TikTok-nya dapet
+                text = word["word"].strip().upper()
                 file.write(f"{count}\n{start} --> {end}\n{text}\n\n")
                 count += 1
         else:
-            # Fallback jika word_timestamps gagal
+            # Fallback ke per kalimat kalau word_timestamps gagal
             start = format_timestamp(segment['start'], always_include_hours=True)
             end = format_timestamp(segment['end'], always_include_hours=True)
-            file.write(f"{count}\n{start} --> {end}\n{segment['text'].strip()}\n\n")
+            file.write(f"{count}\n{start} --> {end}\n{segment['text'].strip().upper()}\n\n")
             count += 1
 
 def filename(path):
