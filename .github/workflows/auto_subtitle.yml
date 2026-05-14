@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       video_url:
-        description: 'https://litter.catbox.moe/896ionklpdp3g4ci.mp4'
+        description: 'Paste Link Download Video Disini (Direct Link)'
         required: true
         default: ''
       model_type:
-        description: 'Ukuran model Whisper (tiny, base, small, medium, large)'
+        description: 'Pilih model Whisper (tiny, base, small, medium, large)'
         required: true
         default: 'small'
 
@@ -27,24 +27,25 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          sudo apt update && sudo apt install -y ffmpeg
+          # Sesuai saran README.md
 
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e .
-          # Mengacu pada requirements.txt di Screenshot_20260514_144006.jpg
-          pip install openai-whisper
+          # Install library ffmpeg-python untuk memperbaiki error sebelumnya
+          pip install ffmpeg-python
+          # Install script langsung dari repo (cara paling bersih sesuai README)
+          pip install .
+          # Ini akan membaca setup.py dan menginstall openai-whisper otomatis
 
       - name: Download Video from URL
         run: |
-          # Menggunakan curl untuk download video dan menamainya 'input_video.mp4'
           curl -L "${{ github.event.inputs.video_url }}" -o input_video.mp4
 
       - name: Run Auto Subtitle
         run: |
-          # Menjalankan script berdasarkan entry point di setup.py (Screenshot_20260514_144014.jpg)
+          # Menggunakan folder './output' sesuai keinginanmu di awal
           auto_subtitle "input_video.mp4" --model ${{ github.event.inputs.model_type }} --output_dir ./output --output_srt True
 
       - name: Upload Result
