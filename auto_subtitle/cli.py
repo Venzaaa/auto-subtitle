@@ -28,7 +28,6 @@ def main():
     audios = get_audio(args.pop("video"))
     
     def transcribe_with_word_fix(audio_path):
-        # Fix untuk error 'Unsupported language: auto' saat word_timestamps=True
         current_args = args.copy()
         if current_args.get("language") == "auto":
             audio = whisper.load_audio(audio_path)
@@ -49,10 +48,8 @@ def main():
 
     for path, srt_path in subtitles.items():
         out_path = os.path.join(output_dir, f"{filename(path)}.mp4")
-
-        # Penyesuaian Style: Ukuran -10 (dari 35 jadi 25)
-        # Posisi Tengah Layar (Alignment=10)
-        # Shadow Dikurangin dari 7 jadi 3
+        
+        # STYLE FINAL: Montserrat Black, No Shadow, Font 25, Tengah Layar
         style = (
             "Fontname=Montserrat Black,Fontsize=20,"
             "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
@@ -60,20 +57,20 @@ def main():
         )
 
         print(f"Adding subtitles to {filename(path)}...")
-        video = ffmpeg.input(path)
-        audio = video.audio
+        
+        # Render High Quality (Anti-Burem)
+        input_stream = ffmpeg.input(path)
+        video = input_stream.video.filter('subtitles', srt_path, force_style=style)
+        audio = input_stream.audio
 
-        ffmpeg.concat(
-            video.filter('subtitles', srt_path, force_style=style), audio, v=1, a=1
-        ).output(
-            out_path, 
-            vcodec='libx264', 
-            crf=17,           # Kualitas paling deket sama asli
-            preset='veryslow', 
-            pix_fmt='yuv420p', 
-            acodec='copy'      
+        ffmpeg.output(
+            video, audio, out_path,
+            vcodec='libx264',
+            crf=17,
+            preset='slow',
+            pix_fmt='yuv420p',
+            acodec='copy'
         ).run(quiet=True, overwrite_output=True)
-
 
 def get_audio(paths):
     temp_dir = tempfile.gettempdir()
